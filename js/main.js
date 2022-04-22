@@ -63,6 +63,6 @@ fetch(url + sqlQuery)
 */
 
 //Attempting to fetch locally
-$.getJSON("data/equitylayer.geojson", function(data) {
+$.getJSON("data/EPCenterline_2016to2018.geojson", function(data) {
   L.geoJSON(data).addTo(map);
 });

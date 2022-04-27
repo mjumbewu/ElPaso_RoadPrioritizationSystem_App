@@ -9,39 +9,80 @@ zoom: 12
 });
  
  
-function filterBy(score) {
-const filters = ['==', 'score', score];
-map.setFilter('score-circles', filters);
+function filterBy(PCI_2018) {
+const filters = ['==', 'PCI_2018', PCI_2018];
+map.setFilter('PCI2018_mb', filters);
  
-// Set the label to the score
-document.getElementById('pci_2018').textContent = score;
+
 }
  
 map.on('load', () => {
-  map.addSource("PCI2018_mb", {
-          "type": "geojson",
-          "data": "PCI2018_mb.geojson"
+
+  // When the map loads, add the data for hexbins
+  map.addSource('allHex_mb', {
+    'type': 'geojson',
+    'data': 'https://raw.githubusercontent.com/jennaepstein/ElPaso_RoadPrioritizationSystem_App/main/App/allHex_mb.geojson',
+    'generateId': true
   });
+
+
+
+  // When the map loads, add the data for the road segements and pci
+  map.addSource('PCI2018_mb', {
+    'type': 'geojson',
+    'data': 'https://raw.githubusercontent.com/jennaepstein/ElPaso_RoadPrioritizationSystem_App/main/App/PCI2018_mb.geojson',
+    'generateId': true // This ensures that all features have unique IDs
+  });
+
+
+
+   
+// Add a new layer to visualize the hexbins.
+map.addLayer({
+  'id': 'equity',
+  'type': 'fill',
+  'source': 'allHex_mb',
+  'paint': {
+  // Color bins by total_equity, using a `match` expression.
+  'fill-color': [
+  'match',
+  ['get', 'total_equity'],
+  'Very Low Need',
+  '#4A7BB7',
+  'Low Need',
+  '#98CAE1',
+  'Moderate Need',
+  '#EAECCC',
+  'High Need',
+  '#FDB366',
+  'Highest Need',
+  '#A50026',
+  /* other */ '#ccc'
+  ],
+  'fill-opacity': 0.5,
+  }
+  });
+
  
 map.addLayer({
   'id': 'PCI2018_mb',
   'type': 'line',
   'source': 'PCI2018_mb',
+  'paint': {
+    'line-width': 4,
+    'line-color': '#585858'
+  },
   'layout': {
   'line-join': 'round',
   'line-cap': 'round'
-  },
-  'paint': {
-  'line-color': '#888',
-  'line-width': 8
   }
-  });
-
- 
+});
 
   document.getElementById('slider').addEventListener('input', (e) => {
-    const score = parseInt(e.target.value, 10);
-    filterBy(score);
+    const PCI_2018 = parseInt(e.target.value, 10);
+    filterBy(PCI_2018);
     });
+
+
 
   })
